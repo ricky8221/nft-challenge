@@ -5,9 +5,9 @@ import {schemaTypes} from './schemas'
 
 export default defineConfig({
   name: 'default',
-  title: 'NFT-Challenge',
+  title: 'sanity',
 
-  projectId: 'htw23pua',
+  projectId: 'ac16szq5',
   dataset: 'production',
 
   plugins: [deskTool(), visionTool()],
