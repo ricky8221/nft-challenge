@@ -1,17 +1,23 @@
 import React from "react";
-import { useAddress, useDisconnect, useMetamask } from "@thirdweb-dev/react"
+import { useAddress, useDisconnect, useMetamask } from "@thirdweb-dev/react";
+import { GetServerSideProps } from "next";
+import sanityCli from "../../sanity/sanity.cli";
+import { sanityClient } from "../../sanity";
+import { Collection } from "../../typings";
 
 
-function NFTDropPage() {
+interface Props {
+  collection: Collection
+}
 
-    // Auth
-    const connectWithMetamask = useMetamask();
-    const address = useAddress();
-    const disconnect = useDisconnect();
-    // ---------
+function NFTDropPage({collection}: Props) {
+  // Auth
+  const connectWithMetamask = useMetamask();
+  const address = useAddress();
+  const disconnect = useDisconnect();
+  // ---------
 
-    console.log(address);
-    
+  console.log(address);
 
   return (
     <div className="flex h-screen flex-col lg:grid lg:grid-cols-10">
@@ -45,8 +51,9 @@ function NFTDropPage() {
             </span>{" "}
             NFT Market Place
           </h1>
-          <button className="rounded-full bg-rose-400 text-white px-4 py-2 text-xs font-bold lg:px-5 lg:py-3 lg:text-base"
-          onClick={ () => address? disconnect() :connectWithMetamask()}
+          <button
+            className="rounded-full bg-rose-400 text-white px-4 py-2 text-xs font-bold lg:px-5 lg:py-3 lg:text-base"
+            onClick={() => (address ? disconnect() : connectWithMetamask())}
           >
             {address ? "Sign Out" : "Sign In"}
           </button>
@@ -54,7 +61,10 @@ function NFTDropPage() {
 
         <hr className="my-2 border" />
         {address && (
-            <p className="text-center text-sm text-rose-500">You're logged in with wallet {address.substring(0,5)}...{address.substring(address.length -5)}</p>
+          <p className="text-center text-sm text-rose-500">
+            You're logged in with wallet {address.substring(0, 5)}...
+            {address.substring(address.length - 5)}
+          </p>
         )}
 
         {/* Content */}
@@ -65,17 +75,63 @@ function NFTDropPage() {
             className="w-80 object-cover pb-10 lg:h-40"
           />
           <h1 className="text-3xl font-bold lg:text-5xl lg:font-extrabold">
-            The PAPAFAM Ape Coding Club | NFT Drop
+            {collection.title}
           </h1>
 
           <p className="pt-2 text-xl text-green-500">13 / 21 NFT's Claimed</p>
         </div>
 
         {/* Mint Button */}
-        <button className="h-16 w-full bg-red-600 text-white rounded-full mt-10 font-bold">Mint NFT (0.01 ETH)</button>
+        <button className="h-16 w-full bg-red-600 text-white rounded-full mt-10 font-bold">
+          Mint NFT (0.01 ETH)
+        </button>
       </div>
     </div>
   );
 }
 
 export default NFTDropPage;
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const query = `*[_type == "collection" && slug.current == $[id]][0] {
+    _id,
+      title,
+      address,
+      description,
+      nftCollectionName,
+      mainImage {
+        asset
+      },
+    previewImage {
+      asset
+    },
+    cicleImage {
+        asset
+    },
+    slug {
+      current
+    },
+    creator-> {
+      _id,
+      name,
+      address,
+      slug {
+        current
+      },
+    },
+  }`;
+  const collection = await sanityClient.fetch(query, {
+    id: params?.id,
+  });
+  // console.log(collection)
+
+
+  if (!collection) {
+    return {
+      notFound: true,
+    };
+  }
+
+  return {
+    props:collection
+  }
+};
