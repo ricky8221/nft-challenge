@@ -76,7 +76,7 @@ function NFTDropPage({ collection }: Props) {
           />
           <h1 className="text-3xl font-bold lg:text-5xl lg:font-extrabold">
             {collection.title}
-            {/* 123 */}
+            123
           </h1>
 
           <p className="pt-2 text-xl text-green-500">13 / 21 NFT's Claimed</p>
@@ -124,7 +124,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const collection = await sanityClient.fetch(query, {
     id: params?.id,
   });
-  console.log(collection);
+  console.log(collection.title);
 
   if (!collection) {
     return {
@@ -133,6 +133,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   }
 
   return {
-    props: collection,
+    Props: collection,
   };
 };
