@@ -4,13 +4,13 @@ import { GetServerSideProps } from "next";
 import sanityCli from "../../sanity/sanity.cli";
 import { sanityClient } from "../../sanity";
 import { Collection } from "../../typings";
-
+import { useRouter } from "next/router";
 
 interface Props {
-  collection: Collection
+  collection: Collection;
 }
 
-function NFTDropPage({collection}: Props) {
+function NFTDropPage({ collection }: Props) {
   // Auth
   const connectWithMetamask = useMetamask();
   const address = useAddress();
@@ -76,6 +76,7 @@ function NFTDropPage({collection}: Props) {
           />
           <h1 className="text-3xl font-bold lg:text-5xl lg:font-extrabold">
             {collection.title}
+            {/* 123 */}
           </h1>
 
           <p className="pt-2 text-xl text-green-500">13 / 21 NFT's Claimed</p>
@@ -92,7 +93,7 @@ function NFTDropPage({collection}: Props) {
 
 export default NFTDropPage;
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const query = `*[_type == "collection" && slug.current == $[id]][0] {
+  const query = `*[_type == "collection" && slug.current == $id][0] {
     _id,
       title,
       address,
@@ -119,11 +120,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       },
     },
   }`;
+
   const collection = await sanityClient.fetch(query, {
     id: params?.id,
   });
-  // console.log(collection)
-
+  console.log(collection);
 
   if (!collection) {
     return {
@@ -132,6 +133,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   }
 
   return {
-    props:collection
-  }
+    props: collection,
+  };
 };
