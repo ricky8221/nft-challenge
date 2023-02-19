@@ -14,7 +14,7 @@ function NFTDropPage({ collection }: Props) {
   const address = useAddress();
   const disconnect = useDisconnect();
   // ---------
-  // console.log(collection);
+  console.log(params)
 
   return (
     <div className="flex h-screen flex-col lg:grid lg:grid-cols-10">
@@ -30,10 +30,10 @@ function NFTDropPage({ collection }: Props) {
           </div>
           <div className="text-center p-5 space-y-2">
             <h1 className="text-4xl font-bold text-white">
-              {collection.nftCollectionName}
+              {/* {collection.nftCollectionName} */}
               </h1>
             <h2 className="text-xl text-gray-300">
-              {collection.description}
+              {/* {collection.description} */}
             </h2>
           </div>
         </div>
@@ -69,12 +69,13 @@ function NFTDropPage({ collection }: Props) {
         {/* Content */}
         <div className="mt-10 flex flex-1 flex-col items-center space-y-6 text-center lg:space-y-0 lg:justify-center">
           <img
-            src={urlFor(collection.mainImage).url()}
+            // src={urlFor(collection.mainImage).url()}
             alt=""
             className="w-80 object-cover pb-10 lg:h-40"
           />
           <h1 className="text-3xl font-bold lg:text-5xl lg:font-extrabold">
-            {collection.title}
+            {/* {collection.title} */}
+            123
           </h1>
 
           <p className="pt-2 text-xl text-green-500">13 / 21 NFT's Claimed</p>
@@ -90,7 +91,6 @@ function NFTDropPage({ collection }: Props) {
 }
 
 export default NFTDropPage;
-
 export const getServerSideProps: GetServerSideProps = async ({params}) => {
   const query = `*[_type == "collection" && slug.current == $id][0] {
     _id,
@@ -123,7 +123,7 @@ export const getServerSideProps: GetServerSideProps = async ({params}) => {
   const collection = await sanityClient.fetch(query, {
     id: params?.id,
   });
-  // console.log(collection.title);
+  console.log(collection.title);
 
   if (!collection) {
     return {
@@ -132,9 +132,9 @@ export const getServerSideProps: GetServerSideProps = async ({params}) => {
   }
 
   return {
-    props: {
-      collection
-    },
+    props: collection,
   };
 
 };
+
+
